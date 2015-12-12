@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">JsonRequester</string>
+    <string name="get_user_details">Get user details</string>
+    <string name="get_gists">Get gists</string>
+    <string name="get_followers">Get followers</string>
+</resources>

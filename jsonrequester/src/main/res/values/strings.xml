@@ -1,0 +1,5 @@
+<resources>
+    <string name="error_happened">Error happened</string>
+    <string name="server_error">Server error</string>
+    <string name="network_error">Check your connection</string>
+</resources>
