@@ -20,7 +20,6 @@ import android.widget.TextView;
 
 import com.afkar.json.requester.sample.items.UserItem;
 import com.bumptech.glide.Glide;
-import com.google.gson.Gson;
 
 /**
  * Created by Alireza Afkar on 12/12/15 AD.
@@ -32,7 +31,7 @@ public class UserFragment extends DialogFragment implements View.OnClickListener
 
     public static UserFragment newInstance(UserItem user) {
         Bundle args = new Bundle();
-        args.putString(USER, new Gson().toJson(user));
+        args.putString(USER, user.toJson());
         UserFragment fragment = new UserFragment();
         fragment.setArguments(args);
         return fragment;
@@ -58,7 +57,7 @@ public class UserFragment extends DialogFragment implements View.OnClickListener
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         String user = getArguments().getString(USER);
-        mUser = new Gson().fromJson(user, UserItem.class);
+        mUser = UserItem.newInstance(user);
     }
 
     @Nullable

@@ -20,6 +20,14 @@ android {
 
 dependencies {
     testCompile 'junit:junit:4.12'
-    provided 'com.android.support:appcompat-v7:23.1.1'
     provided 'com.mcxiaoke.volley:library:1.0.19'
+    provided 'com.android.support:appcompat-v7:23.1.1'
 }
+
+ext {
+    PUBLISH_VERSION = '1.0.0'
+    PUBLISH_GROUP_ID = 'com.afkar'
+    PUBLISH_ARTIFACT_ID = 'json-requester'
+}
+
+apply from: 'https://raw.githubusercontent.com/blundell/release-android-library/master/android-release-aar.gradle'

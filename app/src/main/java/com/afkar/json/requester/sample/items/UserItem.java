@@ -39,9 +39,20 @@ public class UserItem {
     private String created_at;
     private String updated_at;
 
+    public static UserItem newInstance(String object) {
+        if (object != null && !object.equals("")) {
+            return new Gson().fromJson(object, UserItem.class);
+        }
+        return null;
+    }
+
     public static UserItem newInstance(JSONObject object) {
         if (object == null) return null;
-        return new Gson().fromJson(object.toString(), UserItem.class);
+        return newInstance(object.toString());
+    }
+
+    public String toJson() {
+        return new Gson().toJson(this);
     }
 
     public void setLogin(String login) {
