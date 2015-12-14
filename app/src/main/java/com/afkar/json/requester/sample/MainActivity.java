@@ -119,12 +119,12 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onErrorResponse(int requestCode, VolleyError volleyError, @Nullable JSONObject errorObject) {
-            String error = getString(R.string.error_happened);
             if (requestCode == FOLLOWERS_REQUEST && errorObject != null) {
                 ErrorItem errorItem = ErrorItem.newInstance(errorObject);
-                error = errorItem.getMessage();
+                Toast.makeText(MainActivity.this,
+                        errorItem.getMessage(),
+                        Toast.LENGTH_LONG).show();
             }
-            Toast.makeText(MainActivity.this, error, Toast.LENGTH_LONG).show();
         }
 
         @Override
@@ -140,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onResponse(int requestCode, JSONArray jsonArray) {
+        public void onResponse(int requestCode, @Nullable JSONArray jsonArray) {
             GistItem gists = new GistItem(jsonArray);
             StringBuilder stringBuilder = new StringBuilder();
 

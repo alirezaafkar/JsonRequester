@@ -1,9 +1,8 @@
-package com.afkar.json.requester;
+package com.afkar.json.requester.sample;
 
 import android.app.Application;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.Volley;
+import com.afkar.json.requester.Requester;
 
 /**
  * Created by Alireza Afkar on 12/12/15 AD.
@@ -12,7 +11,7 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-        Requester.init(requestQueue);
+        Requester.Config config = new Requester.Config(getApplicationContext());
+        Requester.init(config);
     }
 }

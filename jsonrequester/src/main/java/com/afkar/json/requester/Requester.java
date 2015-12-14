@@ -1,8 +1,9 @@
 package com.afkar.json.requester;
 
-import android.support.annotation.Nullable;
+import android.content.Context;
 
 import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,84 +16,129 @@ import static com.afkar.json.requester.CommonUtils.isEmptyString;
 public class Requester {
     public static final int UN_DEFINED_ERROR = -1;
 
-    private static String sEndOfUrl;
-    private static int sTimeOut = 5000;
-    private static String sEncoding = "UTF-8";
+    private static String sGeneralParam;
+    private static String sEncoding;
+    private static Integer sRetry, sTimeOut;
     private static RequestQueue sRequestQueue;
     private static Map<String, String> sHeader;
 
-    /**
-     * @param queue Request queue to add and manage requests
-     */
-    public static void init(RequestQueue queue) {
-        init(queue, null, 0, null, null);
+    public static void init(Config config) {
+        sRetry = config.getRetry();
+        sGeneralParam = config.generalParam;
+        sHeader = config.getHeader();
+        sTimeOut = config.getTimeOut();
+        sEncoding = config.getEncoding();
+        sRequestQueue = config.getRequestQueue();
     }
 
-    /**
-     * @param queue  Request queue to add and manage requests
-     * @param header Request header
-     */
-    public static void init(RequestQueue queue, Map<String, String> header) {
-        init(queue, header, 0, null, null);
-    }
-
-    /**
-     * @param queue       Request queue to add and manage requests
-     * @param header      Request header
-     * @param timeOut     Request time out
-     * @param encoding    Params encoding
-     * @param appendToUrl String for appending to all of URLs (Such as language)
-     */
-    public static void init(RequestQueue queue, Map<String, String> header,
-                            int timeOut, String encoding, String appendToUrl) {
-        sRequestQueue = queue;
-        if (header != null) sHeader = header;
-        if (timeOut >= 0) sTimeOut = timeOut;
-        if (!isEmptyString(encoding))
-            sEncoding = encoding;
-        if (!isEmptyString(appendToUrl))
-            sEndOfUrl = appendToUrl;
-
-    }
-
-    @Nullable
     public static RequestQueue getRequestQueue() {
         return sRequestQueue;
-    }
-
-    @Nullable
-    public static Map<String, String> getHeader() {
-        return sHeader;
-    }
-
-    public static int getTimeOut() {
-        return sTimeOut;
-    }
-
-    public static String getEncoding() {
-        return sEncoding;
-    }
-
-    public static String getEndOfUrl() {
-        if (isEmptyString(sEndOfUrl))
-            return null;
-        return "%s" + sEndOfUrl;
     }
 
     public static void setRequestQueue(RequestQueue queue) {
         sRequestQueue = queue;
     }
 
-    public static void setHeader(HashMap<String, String> header) {
+    public static Map<String, String> getHeader() {
+        return sHeader;
+    }
+
+    public static void setHeader(Map<String, String> header) {
         sHeader = header;
     }
 
-    public static void setTimeOut(int timeOut) {
+    public static Integer getTimeOut() {
+        return sTimeOut;
+    }
+
+    public static void setTimeOut(Integer timeOut) {
         sTimeOut = timeOut;
+    }
+
+    public static String getEncoding() {
+        return sEncoding;
     }
 
     public static void setEncoding(String encoding) {
         sEncoding = encoding;
     }
 
+    public static String getGeneralParam() {
+        if (isEmptyString(sGeneralParam))
+            return null;
+        return "%s" + sGeneralParam;
+    }
+
+    public static void setGeneralParam(String generalParam) {
+        sGeneralParam = generalParam;
+    }
+
+    public static Integer getRetry() {
+        return sRetry;
+    }
+
+    public static void setRetry(Integer retry) {
+        sRetry = retry;
+    }
+
+
+    public static class Config {
+        private Integer retry, timeOut;
+        private RequestQueue requestQueue;
+        private Map<String, String> header;
+        private String generalParam, encoding = "UTF-8";
+
+        public Config(Context context) {
+            this.header = new HashMap<>();
+            this.requestQueue = Volley.newRequestQueue(context);
+        }
+
+        public String getGeneralParam() {
+            return generalParam;
+        }
+
+        public void setGeneralParam(String generalParam) {
+            this.generalParam = generalParam;
+        }
+
+        public Integer getTimeOut() {
+            return timeOut;
+        }
+
+        public void setTimeOut(Integer timeOut) {
+            this.timeOut = timeOut;
+        }
+
+        public String getEncoding() {
+            return encoding;
+        }
+
+        public void setEncoding(String encoding) {
+            this.encoding = encoding;
+        }
+
+        public RequestQueue getRequestQueue() {
+            return requestQueue;
+        }
+
+        public void setRequestQueue(RequestQueue requestQueue) {
+            this.requestQueue = requestQueue;
+        }
+
+        public Map<String, String> getHeader() {
+            return header;
+        }
+
+        public void setHeader(Map<String, String> header) {
+            this.header = header;
+        }
+
+        public Integer getRetry() {
+            return retry;
+        }
+
+        public void setRetry(Integer retry) {
+            this.retry = retry;
+        }
+    }
 }

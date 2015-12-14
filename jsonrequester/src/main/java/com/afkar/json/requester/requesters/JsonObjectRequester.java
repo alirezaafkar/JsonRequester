@@ -8,9 +8,13 @@ import com.afkar.json.requester.Requester;
 import com.afkar.json.requester.interfaces.Response;
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.NetworkError;
 import com.android.volley.NetworkResponse;
+import com.android.volley.NoConnectionError;
 import com.android.volley.ParseError;
 import com.android.volley.RequestQueue;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -21,9 +25,7 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
-import static com.afkar.json.requester.CommonUtils.checkVolleyError;
 import static com.afkar.json.requester.CommonUtils.isEmptyString;
-import static com.afkar.json.requester.CommonUtils.isNetworkAvailable;
 
 /**
  * Created by Alireza Afkar on 12/11/15 AD.
@@ -62,15 +64,10 @@ public class JsonObjectRequester implements com.android.volley.Response.Listener
         if (mCallBack != null)
             mCallBack.onRequestStart(mBuilder.requestCode);
 
-        if (!isNetworkAvailable(mBuilder.context)) {
-            sendFinish(R.string.network_error);
-            return;
-        }
-
-        String endOfUrl = Requester.getEndOfUrl();
-        if (endOfUrl != null) {
+        String param = Requester.getGeneralParam();
+        if (param != null) {
             String s = url.contains("?") ? "&" : "?";
-            url += String.format(endOfUrl, s);
+            url += String.format(param, s);
         }
 
         JsonObjectRequest request = new JsonObjectRequest(method,
@@ -97,7 +94,7 @@ public class JsonObjectRequester implements com.android.volley.Response.Listener
 
             @Override
             protected String getParamsEncoding() {
-                return "UTF-8";
+                return mBuilder.encoding;
             }
 
             @Override
@@ -111,7 +108,7 @@ public class JsonObjectRequester implements com.android.volley.Response.Listener
                     if (!(response != null && response.data != null))
                         return com.android.volley.Response.error(null);
 
-                    String jsonString = new String(response.data, "UTF-8");
+                    String jsonString = new String(response.data, mBuilder.encoding);
                     if (jsonString.length() == 0 || jsonString.equalsIgnoreCase("null")) {
                         if (mBuilder.allowNullResponse)
                             return com.android.volley.Response.success(null
@@ -134,6 +131,9 @@ public class JsonObjectRequester implements com.android.volley.Response.Listener
         if (mBuilder.retry == null)
             mBuilder.retry = DefaultRetryPolicy.DEFAULT_MAX_RETRIES;
 
+        if (mBuilder.timeOut == null)
+            mBuilder.timeOut = DefaultRetryPolicy.DEFAULT_TIMEOUT_MS;
+
         request.setShouldCache(mBuilder.shouldCache);
         request.setRetryPolicy(new DefaultRetryPolicy(mBuilder.timeOut
                 , mBuilder.retry, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
@@ -144,7 +144,7 @@ public class JsonObjectRequester implements com.android.volley.Response.Listener
     @Override
     public void onResponse(JSONObject jsonObject) {
         if (jsonObject == null && !mBuilder.allowNullResponse)
-            sendFinish(R.string.error_happened);
+            sendFinish(R.string.parsing_error, new ParseError());
         else {
             sendResponse(jsonObject);
         }
@@ -152,11 +152,19 @@ public class JsonObjectRequester implements com.android.volley.Response.Listener
 
     @Override
     public void onErrorResponse(VolleyError volleyError) {
-        int error = checkVolleyError(volleyError);
-        if (error == Requester.UN_DEFINED_ERROR)
+        if (volleyError instanceof NoConnectionError) {
+            sendFinish(R.string.no_connection_error, volleyError);
+        } else if (volleyError instanceof NetworkError) {
+            sendFinish(R.string.network_error, volleyError);
+        } else if (volleyError instanceof TimeoutError) {
+            sendFinish(R.string.timeout_error, volleyError);
+        } else if (volleyError instanceof ServerError) {
+            sendFinish(R.string.server_error, volleyError);
+        } else if (volleyError instanceof ParseError) {
+            sendFinish(R.string.parsing_error, volleyError);
+        } else {
             sendError(volleyError);
-        else
-            sendFinish(error, volleyError);
+        }
     }
 
     @SuppressWarnings("unused")
@@ -165,9 +173,10 @@ public class JsonObjectRequester implements com.android.volley.Response.Listener
     }
 
     private void sendResponse(JSONObject jsonObject) {
-        if (mCallBack == null) return;
-        mCallBack.onResponse(mBuilder.requestCode, jsonObject);
-        mCallBack.onRequestFinish(mBuilder.requestCode);
+        if (mCallBack != null) {
+            mCallBack.onResponse(mBuilder.requestCode, jsonObject);
+            mCallBack.onRequestFinish(mBuilder.requestCode);
+        }
     }
 
     private void sendError(VolleyError volleyError) {
@@ -178,12 +187,8 @@ public class JsonObjectRequester implements com.android.volley.Response.Listener
             mCallBack.onErrorResponse(mBuilder.requestCode, volleyError, errorObject);
             mCallBack.onRequestFinish(mBuilder.requestCode);
         } catch (JSONException e) {
-            sendFinish(R.string.error_happened, volleyError);
+            sendFinish(R.string.parsing_error, volleyError);
         }
-    }
-
-    private void sendFinish(int message) {
-        sendFinish(message, null);
     }
 
     private void sendFinish(int message, VolleyError volleyError) {

@@ -9,9 +9,13 @@ import com.afkar.json.requester.Requester;
 import com.afkar.json.requester.interfaces.Response;
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.NetworkError;
 import com.android.volley.NetworkResponse;
+import com.android.volley.NoConnectionError;
 import com.android.volley.ParseError;
 import com.android.volley.RequestQueue;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.StringRequest;
@@ -44,15 +48,10 @@ public class JsonArrayRequester implements com.android.volley.Response.Listener<
         if (mCallBack != null)
             mCallBack.onRequestStart(mBuilder.requestCode);
 
-        if (!CommonUtils.isNetworkAvailable(mBuilder.context)) {
-            sendFinish(R.string.network_error);
-            return;
-        }
-
-        String endOfUrl = Requester.getEndOfUrl();
-        if (endOfUrl != null) {
+        String param = Requester.getGeneralParam();
+        if (param != null) {
             String s = url.contains("?") ? "&" : "?";
-            url += String.format(endOfUrl, s);
+            url = CommonUtils.appendToUrl(url, param);
         }
 
         StringRequest request = new StringRequest(method, url, JsonArrayRequester.this, JsonArrayRequester.this) {
@@ -77,7 +76,7 @@ public class JsonArrayRequester implements com.android.volley.Response.Listener<
 
             @Override
             protected String getParamsEncoding() {
-                return Requester.getEncoding();
+                return mBuilder.encoding;
             }
 
             @Override
@@ -91,7 +90,7 @@ public class JsonArrayRequester implements com.android.volley.Response.Listener<
                     if (!(response != null && response.data != null))
                         return com.android.volley.Response.error(null);
 
-                    String string = new String(response.data, "UTF-8");
+                    String string = new String(response.data, mBuilder.encoding);
                     return com.android.volley.Response.success(string, HttpHeaderParser
                             .parseCacheHeaders(response));
                 } catch (UnsupportedEncodingException e) {
@@ -103,26 +102,51 @@ public class JsonArrayRequester implements com.android.volley.Response.Listener<
         if (mBuilder.retry == null)
             mBuilder.retry = DefaultRetryPolicy.DEFAULT_MAX_RETRIES;
 
+        if (mBuilder.timeOut == null)
+            mBuilder.timeOut = DefaultRetryPolicy.DEFAULT_TIMEOUT_MS;
+
         request.setShouldCache(mBuilder.shouldCache);
         request.setRetryPolicy(new DefaultRetryPolicy(mBuilder.timeOut,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+                mBuilder.retry, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         request.setTag(mBuilder.tag);
         mQueue.add(request);
     }
 
     @Override
     public void onResponse(String response) {
-        sendResponse(response);
+        try {
+            if (mBuilder.allowNullResponse &&
+                    response.length() == 0 || response.equalsIgnoreCase("null")) {
+                sendResponse(null);
+                return;
+            }
+            JSONArray jsonArray = new JSONArray(response);
+            if (jsonArray.length() > 0)
+                sendResponse(jsonArray);
+            else
+                sendFinish(R.string.parsing_error, new ParseError());
+        } catch (JSONException e) {
+            sendFinish(R.string.network_error, new ParseError(e));
+            if (mBuilder.shouldCache && mQueue.getCache() != null)
+                mQueue.getCache().clear();
+        }
     }
 
     @Override
     public void onErrorResponse(VolleyError volleyError) {
-        int error = CommonUtils.checkVolleyError(volleyError);
-        if (error == Requester.UN_DEFINED_ERROR)
+        if (volleyError instanceof NoConnectionError) {
+            sendFinish(R.string.no_connection_error, volleyError);
+        } else if (volleyError instanceof NetworkError) {
+            sendFinish(R.string.network_error, volleyError);
+        } else if (volleyError instanceof TimeoutError) {
+            sendFinish(R.string.timeout_error, volleyError);
+        } else if (volleyError instanceof ServerError) {
+            sendFinish(R.string.server_error, volleyError);
+        } else if (volleyError instanceof ParseError) {
+            sendFinish(R.string.parsing_error, volleyError);
+        } else {
             sendError(volleyError);
-        else
-            sendFinish(error, volleyError);
+        }
     }
 
     @SuppressWarnings("unused")
@@ -130,19 +154,10 @@ public class JsonArrayRequester implements com.android.volley.Response.Listener<
         mCallBack = callback;
     }
 
-    private void sendResponse(String response) {
-        if (mCallBack == null) return;
-        mCallBack.onRequestFinish(mBuilder.requestCode);
-        try {
-            JSONArray jsonArray = new JSONArray(response);
-            if (jsonArray.length() > 0) {
-                mCallBack.onResponse(mBuilder.requestCode, jsonArray);
-            } else
-                sendFinish(R.string.error_happened);
-        } catch (JSONException e) {
-            sendFinish(R.string.network_error);
-            if (mBuilder.shouldCache && mQueue.getCache() != null)
-                mQueue.getCache().clear();
+    private void sendResponse(JSONArray jsonArray) {
+        if (mCallBack != null) {
+            mCallBack.onRequestFinish(mBuilder.requestCode);
+            mCallBack.onResponse(mBuilder.requestCode, jsonArray);
         }
     }
 
@@ -152,10 +167,6 @@ public class JsonArrayRequester implements com.android.volley.Response.Listener<
             mCallBack.onErrorResponse(mBuilder.requestCode, volleyError, error);
             mCallBack.onRequestFinish(mBuilder.requestCode);
         }
-    }
-
-    private void sendFinish(int message) {
-        sendFinish(message, null);
     }
 
     private void sendFinish(int message, VolleyError volleyError) {

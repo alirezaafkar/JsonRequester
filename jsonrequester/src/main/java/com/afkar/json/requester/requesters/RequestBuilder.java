@@ -19,12 +19,12 @@ import static com.afkar.json.requester.interfaces.ContentType.TYPE_JSON;
  */
 @SuppressWarnings({"unused", "FieldCanBeLocal"})
 public class RequestBuilder {
-    protected Integer retry;
     protected Context context;
-    protected int requestCode, timeOut;
+    protected int requestCode;
+    protected Integer retry, timeOut;
     protected Request.Priority priority;
     protected Map<String, String> header;
-    protected String tag, contentType, body;
+    protected String tag, contentType, body, encoding;
     protected boolean showError, allowNullResponse, shouldCache;
 
     public RequestBuilder(@Nullable Context context) {
@@ -32,11 +32,12 @@ public class RequestBuilder {
             throw new IllegalStateException("Context can not be null");
         }
         this.tag = "";
-        this.showError = false;
         this.context = context;
         this.contentType = TYPE_JSON;
+        this.retry = Requester.getRetry();
         this.header = Requester.getHeader();
         this.timeOut = Requester.getTimeOut();
+        this.encoding = Requester.getEncoding();
         this.priority = Request.Priority.NORMAL;
     }
 
@@ -61,11 +62,17 @@ public class RequestBuilder {
         return this;
     }
 
+    /*
+    * Shows toast with error text on Network or Response Error
+    * */
     public RequestBuilder showError(boolean showError) {
         this.showError = showError;
         return this;
     }
 
+    /*
+    * Consider null or empty response as Success
+    * */
     public RequestBuilder allowNullResponse(boolean allowNullResponse) {
         this.allowNullResponse = allowNullResponse;
         return this;
@@ -107,13 +114,18 @@ public class RequestBuilder {
         return this;
     }
 
-    public RequestBuilder timeOut(int timeOut) {
+    public RequestBuilder timeOut(Integer timeOut) {
         this.timeOut = timeOut;
         return this;
     }
 
     public RequestBuilder shouldCache(boolean shouldCache) {
         this.shouldCache = shouldCache;
+        return this;
+    }
+
+    public RequestBuilder paramsEncoding(String encoding) {
+        this.encoding = encoding;
         return this;
     }
 }
