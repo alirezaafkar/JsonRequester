@@ -85,7 +85,7 @@ mRequester.request(Request.Method.POST, api, json); // application/json
 ### Callbacks
 Set callback to null on destroy
 
-## Activity
+### Activity
 ```java
 @Override
     protected void onDestroy() {
@@ -96,7 +96,7 @@ Set callback to null on destroy
     }
 ```
 
-## Fragment
+### Fragment
 ```java
 @Override
     public void onDetach() {
@@ -107,7 +107,7 @@ Set callback to null on destroy
     }
 ```
 
-## Nested Fragment
+### Nested Fragment
 ```java
 if (getParentFragment().isRemoving() ||
                 isRemoving() || getActivity().isFinishing()) {
@@ -115,7 +115,7 @@ if (getParentFragment().isRemoving() ||
 }
 ```
 
-##Override strings
+###Override strings
 ```xml
 <string name="parsing_error">Parsing error</string>
 <string name="server_error">Server error</string>
