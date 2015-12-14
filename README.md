@@ -7,7 +7,7 @@ An Android library for sending fast and clean json request, using volley
 
 ```
 dependencies {
-    compile 'com.afkar:json-requester:1.0.0'
+    compile 'com.github.alirezaafkar:json-requester:1.0.1'
     compile 'com.mcxiaoke.volley:library:1.0.19'
     compile 'com.android.support:appcompat-v7:23.1.1'
 }
@@ -15,18 +15,19 @@ dependencies {
 
 ### Usage
 
-Define your default `#RequestQueue` and `#Header` in your `Application` class in the `#onCreate()` method.
+Initialize `#Requester` in your `Application` class in the `#onCreate()` method.
 
 ```java
 @Override
 public void onCreate() {
     super.onCreate();
     
-    RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
     Map<String, String> header = new HashMap<>();
     header.put("charset", "utf-8");
-        
-    Requester.init(queue, header);
+    
+    Requester.Config config = new Requester.Config(getApplicationContext());
+    config.setHeader(header);    
+    Requester.init(config);
 }
 ```
 
@@ -58,7 +59,7 @@ private class JsonObjectListener extends Response.SimpleObjectResponse {
         }
 
         @Override
-        public void onFinishResponse(int requestCode, @Nullable VolleyError volleyError, String message) {
+        public void onFinishResponse(int requestCode, VolleyError volleyError, String message) {
           //Network or Server error
         }
 
@@ -78,7 +79,7 @@ private class JsonObjectListener extends Response.SimpleObjectResponse {
 ```java
 mRequester.request(Request.Method.GET, your_api);
 mRequester.request(Request.Method.POST, api, body); // application/x-www-form-urlencoded
-MRequester.request(Request.Method.POST, api, json); // application/json
+mRequester.request(Request.Method.POST, api, json); // application/json
 ```
 
 ### Callbacks
@@ -112,6 +113,15 @@ if (getParentFragment().isRemoving() ||
                 isRemoving() || getActivity().isFinishing()) {
             mRequester.setCallback(null);
 }
+```
+
+##Override strings
+```xml
+<string name="parsing_error">Parsing error</string>
+<string name="server_error">Server error</string>
+<string name="network_error">Check your connection</string>
+<string name="no_connection_error">No Connection</string>
+<string name="timeout_error">Timeout error</string>
 ```
 
 #Licence
