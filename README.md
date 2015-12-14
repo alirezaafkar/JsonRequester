@@ -8,19 +8,25 @@ An Android library for sending fast and clean json request, using volley
 ```
 dependencies {
     compile 'com.afkar:json-requester:1.0.0'
+    compile 'com.mcxiaoke.volley:library:1.0.19'
+    compile 'com.android.support:appcompat-v7:23.1.1'
 }
 ```
 
 ### Usage
 
-Define your default `#RequestQueue` in your `Application` class in the `#onCreate()` method.
+Define your default `#RequestQueue` and `#Header` in your `Application` class in the `#onCreate()` method.
 
 ```java
 @Override
 public void onCreate() {
     super.onCreate();
+    
     RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
-    Requester.init(queue);
+    Map<String, String> header = new HashMap<>();
+    header.put("charset", "utf-8");
+        
+    Requester.init(queue, header);
 }
 ```
 
