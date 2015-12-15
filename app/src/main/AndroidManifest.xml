@@ -1,19 +1,19 @@
 <manifest
-    package="com.afkar.json.requester.sample"
+    package="com.alirezaafkar.json.requester.sample"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
-        android:name="com.afkar.json.requester.sample.MyApplication"
+        android:name="com.alirezaafkar.json.requester.sample.MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name="com.afkar.json.requester.sample.MainActivity">
+        <activity android:name="com.alirezaafkar.json.requester.sample.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

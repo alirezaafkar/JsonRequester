@@ -5,7 +5,7 @@ android {
     buildToolsVersion "23.0.2"
 
     defaultConfig {
-        applicationId "com.afkar.json.requester.sample"
+        applicationId "com.alirezaafkar.json.requester.sample"
         minSdkVersion 8
         targetSdkVersion 23
         versionCode 101
