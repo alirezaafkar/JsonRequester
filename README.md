@@ -1,5 +1,5 @@
 # JsonRequester
-An Android library for sending fast and clean json request, using volley
+An Android library for sending fast and clean json request, using Volley
 
 ##Getting started
 
@@ -7,7 +7,7 @@ An Android library for sending fast and clean json request, using volley
 
 ```
 dependencies {
-    compile 'com.github.alirezaafkar:json-requester:1.0.1'
+    compile 'com.alirezaafkar:json-requester:1.0.1'
     compile 'com.mcxiaoke.volley:library:1.0.19'
     compile 'com.android.support:appcompat-v7:23.1.1'
 }
@@ -15,7 +15,7 @@ dependencies {
 
 ### Usage
 
-Initialize `#Requester` in your `Application` class in the `#onCreate()` method.
+Initialize `Requester` in your `Application` class in the `onCreate()` method.
 
 ```java
 @Override
