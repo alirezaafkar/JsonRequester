@@ -1,5 +1,5 @@
 # JsonRequester
-An Android library for sending fast and clean json request, using Volley
+An Android library for sending fast and clean JSON request, using Volley
 
 ##Getting started
 
