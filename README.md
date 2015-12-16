@@ -88,9 +88,9 @@ private class JsonObjectListener extends Response.SimpleObjectResponse {
 
 ### Request
 ```java
-mRequester.request(Request.Method.GET, your_api);
-mRequester.request(Request.Method.POST, api, body); // application/x-www-form-urlencoded
-mRequester.request(Request.Method.POST, api, json); // application/json
+mRequester.request(Methods.GET, your_api);
+mRequester.request(Methods.POST, api, body); // application/x-www-form-urlencoded
+mRequester.request(Methods.POST, api, json); // application/json
 ```
 
 ### Callbacks
