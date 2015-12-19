@@ -3,17 +3,6 @@ An Android library for sending fast and clean JSON request, using Volley
 
 ##Getting started
 
-
-### Repository
-
-```
-repositories {
-    maven {
-        url  "http://dl.bintray.com/alirezaafkar/maven" 
-    }
-}
-```
-
 ### Dependency
 
 ```
