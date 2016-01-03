@@ -42,11 +42,19 @@ public class RequestBuilder {
     }
 
     public JsonObjectRequester buildObjectRequester(Response.ObjectResponse listener) {
-        return new JsonObjectRequester(getQueue(), this, listener);
+        return buildObjectRequester(getQueue(), listener);
     }
 
     public JsonArrayRequester buildArrayRequester(Response.ArrayResponse listener) {
-        return new JsonArrayRequester(getQueue(), this, listener);
+        return buildArrayRequester(getQueue(), listener);
+    }
+
+    public JsonObjectRequester buildObjectRequester(RequestQueue queue, Response.ObjectResponse listener) {
+        return new JsonObjectRequester(queue, this, listener);
+    }
+
+    public JsonArrayRequester buildArrayRequester(RequestQueue queue, Response.ArrayResponse listener) {
+        return new JsonArrayRequester(queue, this, listener);
     }
 
     private RequestQueue getQueue() {

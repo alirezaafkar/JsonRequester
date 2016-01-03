@@ -14,18 +14,18 @@ import static com.alirezaafkar.json.requester.CommonUtils.isEmptyString;
  * Created by Alireza Afkar on 12/11/15 AD.
  */
 public class Requester {
-    private static String sGeneralParam;
     private static String sEncoding;
+    private static String sGeneralParam;
     private static Integer sRetry, sTimeOut;
     private static RequestQueue sRequestQueue;
     private static Map<String, String> sHeader;
 
     public static void init(Config config) {
         sRetry = config.getRetry();
-        sGeneralParam = config.generalParam;
         sHeader = config.getHeader();
         sTimeOut = config.getTimeOut();
         sEncoding = config.getEncoding();
+        sGeneralParam = config.generalParam;
         sRequestQueue = config.getRequestQueue();
     }
 
