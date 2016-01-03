@@ -44,6 +44,14 @@ public class JsonArrayRequester implements com.android.volley.Response.Listener<
         mCallBack = callBack;
     }
 
+    /**
+     * Send request using {@link Methods Methods.GET}
+     */
+    @SuppressWarnings("unused")
+    public void request(@NonNull String url) {
+        request(Methods.GET, url);
+    }
+
     @SuppressWarnings("unused")
     public void request(@Methods.Method int method, @NonNull String url) {
         if (mCallBack != null)

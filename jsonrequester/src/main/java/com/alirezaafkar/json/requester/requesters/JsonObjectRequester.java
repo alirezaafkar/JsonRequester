@@ -50,6 +50,14 @@ public class JsonObjectRequester implements com.android.volley.Response.Listener
         return null;
     }
 
+    /**
+     * Send request using {@link Methods Methods.GET}
+     */
+    @SuppressWarnings("unused")
+    public void request(@NonNull String url) {
+        request(Methods.GET, url, getNullJson());
+    }
+
     @SuppressWarnings("unused")
     public void request(@Methods.Method int method, @NonNull String url) {
         request(method, url, getNullJson());
