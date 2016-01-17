@@ -3,7 +3,6 @@ package com.alirezaafkar.json.requester.requesters;
 import android.support.annotation.NonNull;
 import android.widget.Toast;
 
-import com.alirezaafkar.json.requester.CommonUtils;
 import com.alirezaafkar.json.requester.R;
 import com.alirezaafkar.json.requester.Requester;
 import com.alirezaafkar.json.requester.interfaces.Methods;
@@ -26,6 +25,9 @@ import org.json.JSONException;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
+
+import static com.alirezaafkar.json.requester.CommonUtils.appendToUrl;
+import static com.alirezaafkar.json.requester.CommonUtils.isClientError;
 
 /**
  * Created by Alireza Afkar on 12/11/15 AD.
@@ -60,7 +62,7 @@ public class JsonArrayRequester implements com.android.volley.Response.Listener<
         String param = Requester.getGeneralParam();
         if (param != null) {
             String s = url.contains("?") ? "&" : "?";
-            url = CommonUtils.appendToUrl(url, param);
+            url = appendToUrl(url, param);
         }
 
         StringRequest request = new StringRequest(method, url, JsonArrayRequester.this, JsonArrayRequester.this) {
@@ -151,7 +153,11 @@ public class JsonArrayRequester implements com.android.volley.Response.Listener<
         } else if (volleyError instanceof TimeoutError) {
             sendFinish(R.string.timeout_error, volleyError);
         } else if (volleyError instanceof ServerError) {
-            sendFinish(R.string.server_error, volleyError);
+            if (isClientError(volleyError)) {
+                sendError(volleyError);
+            } else {
+                sendFinish(R.string.server_error, volleyError);
+            }
         } else if (volleyError instanceof ParseError) {
             sendFinish(R.string.parsing_error, volleyError);
         } else {

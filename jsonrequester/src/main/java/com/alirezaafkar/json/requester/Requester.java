@@ -8,7 +8,7 @@ import com.android.volley.toolbox.Volley;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.alirezaafkar.json.requester.CommonUtils.isEmptyString;
+import static android.text.TextUtils.isEmpty;
 
 /**
  * Created by Alireza Afkar on 12/11/15 AD.
@@ -62,9 +62,7 @@ public class Requester {
     }
 
     public static String getGeneralParam() {
-        if (isEmptyString(sGeneralParam))
-            return null;
-        return "%s" + sGeneralParam;
+        return isEmpty(sGeneralParam) ? null : "%s" + sGeneralParam;
     }
 
     public static void setGeneralParam(String generalParam) {

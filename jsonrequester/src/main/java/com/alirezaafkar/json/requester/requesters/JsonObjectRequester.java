@@ -26,7 +26,8 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
-import static com.alirezaafkar.json.requester.CommonUtils.isEmptyString;
+import static android.text.TextUtils.isEmpty;
+import static com.alirezaafkar.json.requester.CommonUtils.isClientError;
 
 /**
  * Created by Alireza Afkar on 12/11/15 AD.
@@ -96,9 +97,9 @@ public class JsonObjectRequester implements com.android.volley.Response.Listener
 
             @Override
             public byte[] getBody() {
-                if (!isEmptyString(mBuilder.body))
-                    return mBuilder.body.getBytes();
-                return super.getBody();
+                return isEmpty(mBuilder.body)
+                        ? super.getBody()
+                        : mBuilder.body.getBytes();
             }
 
             @Override
@@ -168,7 +169,11 @@ public class JsonObjectRequester implements com.android.volley.Response.Listener
         } else if (volleyError instanceof TimeoutError) {
             sendFinish(R.string.timeout_error, volleyError);
         } else if (volleyError instanceof ServerError) {
-            sendFinish(R.string.server_error, volleyError);
+            if (isClientError(volleyError)) {
+                sendError(volleyError);
+            } else {
+                sendFinish(R.string.server_error, volleyError);
+            }
         } else if (volleyError instanceof ParseError) {
             sendFinish(R.string.parsing_error, volleyError);
         } else {
