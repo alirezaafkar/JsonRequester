@@ -52,7 +52,6 @@ public class MainActivity extends AppCompatActivity {
         mTextView = (TextView) findViewById(R.id.text);
         mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
 
-
         JsonObjectListener objectListener = new JsonObjectListener();
 
         mUserRequester = new RequestBuilder(this)

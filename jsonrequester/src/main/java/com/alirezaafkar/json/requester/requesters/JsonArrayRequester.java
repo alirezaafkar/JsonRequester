@@ -80,14 +80,17 @@ public class JsonArrayRequester implements com.android.volley.Response.Listener<
 
             @Override
             public byte[] getBody() throws AuthFailureError {
-                if (mBuilder.body != null)
-                    return mBuilder.body.getBytes();
-                return super.getBody();
+                return mBuilder.body != null &&
+                        mBuilder.body.length != 0
+                        ? mBuilder.body
+                        : super.getBody();
             }
 
             @Override
             protected String getParamsEncoding() {
-                return mBuilder.encoding;
+                return mBuilder.encoding == null
+                        ? super.getParamsEncoding()
+                        : mBuilder.encoding;
             }
 
             @Override

@@ -19,12 +19,13 @@ import static com.alirezaafkar.json.requester.interfaces.ContentType.TYPE_JSON;
  */
 @SuppressWarnings({"unused", "FieldCanBeLocal"})
 public class RequestBuilder {
+    protected byte[] body;
     protected Context context;
     protected int requestCode;
     protected Integer retry, timeOut;
     protected Request.Priority priority;
     protected Map<String, String> header;
-    protected String tag, contentType, body, encoding;
+    protected String tag, contentType, encoding;
     protected boolean showError, allowNullResponse, shouldCache;
 
     public RequestBuilder(@Nullable Context context) {
@@ -97,6 +98,11 @@ public class RequestBuilder {
     }
 
     public RequestBuilder body(String body) {
+        this.body = body.getBytes();
+        return this;
+    }
+
+    public RequestBuilder body(byte[] body) {
         this.body = body;
         return this;
     }

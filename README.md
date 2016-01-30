@@ -7,7 +7,7 @@ An Android library for sending fast and clean JSON request, using Volley
 
 ```
 dependencies {
-    compile 'com.alirezaafkar:json-requester:1.0.3'
+    compile 'com.alirezaafkar:json-requester:1.0.4'
     compile 'com.mcxiaoke.volley:library:1.0.19'
 }
 ```
@@ -41,7 +41,7 @@ mRequester = new RequestBuilder(this)
             .priority(Request.Priority.NORMAL)
             .allowNullResponse(true)
             .tag(REQUEST_TAG)
-            .addToHeader("token", user_tooken)
+            .addToHeader("token", user_token)
             .buildObjectRequester(listener); //or .buildArrayRequester(listener);
 ```
 ### Create a listener

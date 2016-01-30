@@ -26,7 +26,6 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
-import static android.text.TextUtils.isEmpty;
 import static com.alirezaafkar.json.requester.CommonUtils.isClientError;
 
 /**
@@ -34,8 +33,8 @@ import static com.alirezaafkar.json.requester.CommonUtils.isClientError;
  */
 
 public class JsonObjectRequester implements com.android.volley.Response.Listener<JSONObject>, com.android.volley.Response.ErrorListener {
-    protected RequestBuilder mBuilder;
     protected RequestQueue mQueue;
+    protected RequestBuilder mBuilder;
     protected Response.ObjectResponse mCallBack;
 
     protected JsonObjectRequester() {
@@ -66,7 +65,7 @@ public class JsonObjectRequester implements com.android.volley.Response.Listener
 
     @SuppressWarnings("unused")
     public void request(@Methods.Method int method, @NonNull String url, @NonNull String body) {
-        mBuilder.body = body;
+        mBuilder.body = body.getBytes();
         request(method, url, getNullJson());
     }
 
@@ -97,14 +96,17 @@ public class JsonObjectRequester implements com.android.volley.Response.Listener
 
             @Override
             public byte[] getBody() {
-                return isEmpty(mBuilder.body)
-                        ? super.getBody()
-                        : mBuilder.body.getBytes();
+                return mBuilder.body != null &&
+                        mBuilder.body.length != 0
+                        ? mBuilder.body
+                        : super.getBody();
             }
 
             @Override
             protected String getParamsEncoding() {
-                return mBuilder.encoding;
+                return mBuilder.encoding == null
+                        ? super.getParamsEncoding()
+                        : mBuilder.encoding;
             }
 
             @Override
