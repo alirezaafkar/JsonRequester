@@ -8,8 +8,8 @@ android {
     defaultConfig {
         minSdkVersion 8
         targetSdkVersion 23
-        versionCode 104
-        versionName "1.0.4"
+        versionCode 106
+        versionName "1.0.6"
     }
     buildTypes {
         release {
@@ -22,11 +22,11 @@ android {
 dependencies {
     testCompile 'junit:junit:4.12'
     provided 'com.mcxiaoke.volley:library:1.0.19'
-    compile 'com.android.support:support-annotations:23.1.1'
+    compile 'com.android.support:support-annotations:23.2.1'
 }
 
 publish {
-    publishVersion = '1.0.4'
+    publishVersion = '1.0.6'
 
     userOrg = 'alirezaafkar'
     groupId = 'com.alirezaafkar'

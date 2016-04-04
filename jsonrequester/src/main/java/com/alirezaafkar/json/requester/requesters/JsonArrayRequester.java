@@ -181,11 +181,16 @@ public class JsonArrayRequester implements com.android.volley.Response.Listener<
     }
 
     private void sendError(VolleyError volleyError) {
-        if (mCallBack != null) {
-            String error = new String(volleyError.networkResponse.data);
-            mCallBack.onErrorResponse(mBuilder.requestCode, volleyError, error);
-            mCallBack.onRequestFinish(mBuilder.requestCode);
+        if (mCallBack == null) return;
+
+        if (volleyError.networkResponse == null || volleyError.networkResponse.data == null) {
+            sendFinish(R.string.network_error, new NetworkError());
+            return;
         }
+
+        String error = new String(volleyError.networkResponse.data);
+        mCallBack.onErrorResponse(mBuilder.requestCode, volleyError, error);
+        mCallBack.onRequestFinish(mBuilder.requestCode);
     }
 
     private void sendFinish(int message, VolleyError volleyError) {

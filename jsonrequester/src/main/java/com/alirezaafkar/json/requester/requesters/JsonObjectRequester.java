@@ -197,6 +197,12 @@ public class JsonObjectRequester implements com.android.volley.Response.Listener
 
     private void sendError(VolleyError volleyError) {
         if (mCallBack == null) return;
+
+        if (volleyError.networkResponse == null || volleyError.networkResponse.data == null) {
+            sendFinish(R.string.network_error, new NetworkError());
+            return;
+        }
+
         try {
             JSONObject errorObject = new JSONObject(new
                     String(volleyError.networkResponse.data));
