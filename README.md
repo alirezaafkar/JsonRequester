@@ -7,7 +7,7 @@ An Android library for sending fast and clean JSON request, using Volley
 
 ```
 dependencies {
-    compile 'com.alirezaafkar:json-requester:1.0.4'
+    compile 'com.alirezaafkar:json-requester:1.0.6'
     compile 'com.mcxiaoke.volley:library:1.0.19'
 }
 ```
