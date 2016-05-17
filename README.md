@@ -7,8 +7,8 @@ An Android library for sending fast and clean JSON request, using Volley
 
 ```
 dependencies {
-    compile 'com.alirezaafkar:json-requester:1.0.6'
-    compile 'com.mcxiaoke.volley:library:1.0.19'
+    compile 'com.alirezaafkar:json-requester:1.0.7'
+    compile 'com.android.volley:volley:1.0.0'
 }
 ```
 
@@ -24,9 +24,9 @@ public void onCreate() {
     Map<String, String> header = new HashMap<>();
     header.put("charset", "utf-8");
     
-    Requester.Config config = new Requester.Config(getApplicationContext());
-    config.setHeader(header);    
-    Requester.init(config);
+    String baseUrl = "http://example.com/api/";
+    
+    new Requester.Config(getApplicationContext()).baseUrl(baseUrl).header(header); 
 }
 ```
 
@@ -47,7 +47,7 @@ mRequester = new RequestBuilder(this)
 ### Create a listener
 ```java
 private class JsonObjectListener extends Response.SimpleObjectResponse {
-@Override
+        @Override
         public void onResponse(int requestCode, @Nullable JSONObject jsonObject) {
           //Ok
         }

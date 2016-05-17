@@ -26,6 +26,7 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
+import static android.text.TextUtils.isEmpty;
 import static com.alirezaafkar.json.requester.CommonUtils.isClientError;
 
 /**
@@ -72,6 +73,11 @@ public class JsonObjectRequester implements com.android.volley.Response.Listener
     public void request(@Methods.Method int method, @NonNull String url, JSONObject jsonObject) {
         if (mCallBack != null)
             mCallBack.onRequestStart(mBuilder.requestCode);
+
+        if (!mBuilder.ignoreBaseUrl &&
+                !isEmpty(Requester.getBaseUrl())) {
+            url = Requester.getBaseUrl() + url;
+        }
 
         String param = Requester.getGeneralParam();
         if (param != null) {

@@ -3,13 +3,13 @@ apply plugin: 'com.novoda.bintray-release'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    buildToolsVersion "23.0.3"
 
     defaultConfig {
         minSdkVersion 8
         targetSdkVersion 23
-        versionCode 106
-        versionName "1.0.6"
+        versionCode 107
+        versionName "1.0.7"
     }
     buildTypes {
         release {
@@ -21,12 +21,12 @@ android {
 
 dependencies {
     testCompile 'junit:junit:4.12'
-    provided 'com.mcxiaoke.volley:library:1.0.19'
-    compile 'com.android.support:support-annotations:23.2.1'
+    provided 'com.android.volley:volley:1.0.0'
+    compile 'com.android.support:support-annotations:23.4.0'
 }
 
 publish {
-    publishVersion = '1.0.6'
+    publishVersion = '1.0.7'
 
     userOrg = 'alirezaafkar'
     groupId = 'com.alirezaafkar'

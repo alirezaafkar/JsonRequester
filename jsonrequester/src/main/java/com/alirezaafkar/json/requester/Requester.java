@@ -13,128 +13,120 @@ import static android.text.TextUtils.isEmpty;
 /**
  * Created by Alireza Afkar on 12/11/15 AD.
  */
+@SuppressWarnings("unused")
 public class Requester {
-    private static String sEncoding;
-    private static String sGeneralParam;
-    private static Integer sRetry, sTimeOut;
-    private static RequestQueue sRequestQueue;
-    private static Map<String, String> sHeader;
+    private static Config config;
 
-    public static void init(Config config) {
-        sRetry = config.getRetry();
-        sHeader = config.getHeader();
-        sTimeOut = config.getTimeOut();
-        sEncoding = config.getEncoding();
-        sGeneralParam = config.generalParam;
-        sRequestQueue = config.getRequestQueue();
+    private Requester() {
     }
 
     public static RequestQueue getRequestQueue() {
-        return sRequestQueue;
-    }
-
-    public static void setRequestQueue(RequestQueue queue) {
-        sRequestQueue = queue;
+        return config.getRequestQueue();
     }
 
     public static Map<String, String> getHeader() {
-        return sHeader;
+        return config.getHeader();
     }
 
-    public static void setHeader(Map<String, String> header) {
-        sHeader = header;
-    }
 
     public static Integer getTimeOut() {
-        return sTimeOut;
-    }
-
-    public static void setTimeOut(Integer timeOut) {
-        sTimeOut = timeOut;
+        return config.getTimeOut();
     }
 
     public static String getEncoding() {
-        return sEncoding;
-    }
-
-    public static void setEncoding(String encoding) {
-        sEncoding = encoding;
+        return config.getEncoding();
     }
 
     public static String getGeneralParam() {
-        return isEmpty(sGeneralParam) ? null : "%s" + sGeneralParam;
-    }
-
-    public static void setGeneralParam(String generalParam) {
-        sGeneralParam = generalParam;
+        String params = config.getGeneralParam();
+        return isEmpty(params) ? null : "%s" + params;
     }
 
     public static Integer getRetry() {
-        return sRetry;
+        return config.getRetry();
     }
 
-    public static void setRetry(Integer retry) {
-        sRetry = retry;
+    public static String getBaseUrl() {
+        return config.getBaseUrl();
     }
-
 
     public static class Config {
         private Integer retry, timeOut;
         private RequestQueue requestQueue;
         private Map<String, String> header;
-        private String generalParam, encoding = "UTF-8";
+        private String baseUrl, generalParam, encoding = "UTF-8";
 
         public Config(Context context) {
             this.header = new HashMap<>();
             this.requestQueue = Volley.newRequestQueue(context);
         }
 
-        public String getGeneralParam() {
+        private String getGeneralParam() {
             return generalParam;
         }
 
-        public void setGeneralParam(String generalParam) {
+        public Config generalParam(String generalParam) {
             this.generalParam = generalParam;
+            return build();
         }
 
-        public Integer getTimeOut() {
+        private Integer getTimeOut() {
             return timeOut;
         }
 
-        public void setTimeOut(Integer timeOut) {
+        public Config timeOut(Integer timeOut) {
             this.timeOut = timeOut;
+            return build();
         }
 
-        public String getEncoding() {
+        private String getEncoding() {
             return encoding;
         }
 
-        public void setEncoding(String encoding) {
+        public Config encoding(String encoding) {
             this.encoding = encoding;
+            return build();
         }
 
-        public RequestQueue getRequestQueue() {
+        private RequestQueue getRequestQueue() {
             return requestQueue;
         }
 
-        public void setRequestQueue(RequestQueue requestQueue) {
+        public Config requestQueue(RequestQueue requestQueue) {
             this.requestQueue = requestQueue;
+            return build();
         }
 
-        public Map<String, String> getHeader() {
+        private Map<String, String> getHeader() {
             return header;
         }
 
-        public void setHeader(Map<String, String> header) {
+        public Config header(Map<String, String> header) {
             this.header = header;
+            return build();
         }
 
-        public Integer getRetry() {
+        private Integer getRetry() {
             return retry;
         }
 
-        public void setRetry(Integer retry) {
+        public Config retry(Integer retry) {
             this.retry = retry;
+            return build();
+        }
+
+        private String getBaseUrl() {
+            return baseUrl;
+        }
+
+        public Config baseUrl(String baseUrl) {
+            this.baseUrl = baseUrl;
+            return build();
+        }
+
+        private Config build() {
+            config = this;
+            return this;
         }
     }
 }

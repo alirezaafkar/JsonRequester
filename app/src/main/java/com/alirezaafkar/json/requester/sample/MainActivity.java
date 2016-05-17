@@ -33,16 +33,12 @@ public class MainActivity extends AppCompatActivity {
     private static final int USER_REQUEST = 0;
     private static final int FOLLOWERS_REQUEST = 1;
 
-    private JsonArrayRequester mGistsRequester;
+    private JsonArrayRequester mGistRequester;
     private JsonObjectRequester mUserRequester;
     private JsonObjectRequester mFollowersRequester;
 
     private TextView mTextView;
     private ProgressBar mProgressBar;
-
-    private String mGistsAPi = "https://api.github.com/gists/public";
-    private String mUserAPi = "https://api.github.com/users/alirezaafkar";
-    private String mFollowersAPi = "https://api.github.com/user/followers";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -64,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
                 .showError(true)
                 .buildObjectRequester(objectListener);
 
-        mGistsRequester = new RequestBuilder(this)
+        mGistRequester = new RequestBuilder(this)
                 .showError(true)
                 .buildArrayRequester(new JsonArrayListener());
     }
@@ -79,13 +75,14 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.user_action:
-                mUserRequester.request(Methods.GET, mUserAPi);
+                mUserRequester.request(Methods.GET, MyApplication.USER_API);
                 break;
             case R.id.gists_action:
-                mGistsRequester.request(Methods.GET, mGistsAPi);
+                //Default method is Get
+                mGistRequester.request(MyApplication.GIST_API);
                 break;
             case R.id.followers_action:
-                mFollowersRequester.request(Methods.GET, mFollowersAPi);
+                mFollowersRequester.request(MyApplication.FOLLOWERS_API);
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -96,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         if (isFinishing()) {
             mUserRequester.setCallback(null);
-            mGistsRequester.setCallback(null);
+            mGistRequester.setCallback(null);
             mFollowersRequester.setCallback(null);
         }
     }
@@ -139,10 +136,10 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onResponse(int requestCode, @Nullable JSONArray jsonArray) {
-            GistItem gists = new GistItem(jsonArray);
+            GistItem gist = new GistItem(jsonArray);
             StringBuilder stringBuilder = new StringBuilder();
 
-            for (GistEntity feed : gists.getItems()) {
+            for (GistEntity feed : gist.getItems()) {
                 stringBuilder.append(feed.getUrl());
                 stringBuilder.append("\n");
             }

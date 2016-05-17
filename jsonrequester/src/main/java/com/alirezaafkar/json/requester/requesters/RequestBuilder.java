@@ -26,7 +26,7 @@ public class RequestBuilder {
     protected Request.Priority priority;
     protected Map<String, String> header;
     protected String tag, contentType, encoding;
-    protected boolean showError, allowNullResponse, shouldCache;
+    protected boolean showError, allowNullResponse, shouldCache, ignoreBaseUrl;
 
     public RequestBuilder(@Nullable Context context) {
         if (context == null) {
@@ -140,6 +140,11 @@ public class RequestBuilder {
 
     public RequestBuilder paramsEncoding(String encoding) {
         this.encoding = encoding;
+        return this;
+    }
+
+    public RequestBuilder ignoreBaseUrl() {
+        this.ignoreBaseUrl = true;
         return this;
     }
 }
