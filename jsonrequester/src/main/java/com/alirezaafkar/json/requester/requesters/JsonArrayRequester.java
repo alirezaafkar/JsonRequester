@@ -56,6 +56,12 @@ public class JsonArrayRequester implements com.android.volley.Response.Listener<
     }
 
     @SuppressWarnings("unused")
+    public void request(@Methods.Method int method, @NonNull String url, @NonNull String body) {
+        mBuilder.body = body.getBytes();
+        request(method, url);
+    }
+
+    @SuppressWarnings("unused")
     public void request(@Methods.Method int method, @NonNull String url) {
         if (mCallBack != null)
             mCallBack.onRequestStart(mBuilder.requestCode);
