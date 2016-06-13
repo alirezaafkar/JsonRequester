@@ -31,6 +31,12 @@ public class Response {
         void onErrorResponse(int requestCode, VolleyError volleyError, String error);
     }
 
+    public interface StringResponse extends SimpleResponse {
+        void onResponse(int requestCode, @Nullable String jsonArray);
+
+        void onErrorResponse(int requestCode, VolleyError volleyError, String error);
+    }
+
     public static class SimpleObjectResponse implements ObjectResponse {
         @Override
         public void onResponse(int requestCode, @Nullable JSONObject jsonObject) {
@@ -61,6 +67,33 @@ public class Response {
     public static class SimpleArrayResponse implements ArrayResponse {
         @Override
         public void onResponse(int requestCode, @Nullable JSONArray jsonArray) {
+
+        }
+
+        @Override
+        public void onErrorResponse(int requestCode, VolleyError volleyError, String error) {
+
+        }
+
+        @Override
+        public void onFinishResponse(int requestCode, VolleyError volleyError, String error) {
+
+        }
+
+        @Override
+        public void onRequestStart(int requestCode) {
+
+        }
+
+        @Override
+        public void onRequestFinish(int requestCode) {
+
+        }
+    }
+
+    public static class SimpleStringResponse implements StringResponse {
+        @Override
+        public void onResponse(int requestCode, @Nullable String jsonArray) {
 
         }
 

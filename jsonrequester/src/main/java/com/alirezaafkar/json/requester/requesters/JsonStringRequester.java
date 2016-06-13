@@ -20,9 +20,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.StringRequest;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
@@ -33,15 +30,15 @@ import static com.alirezaafkar.json.requester.CommonUtils.isClientError;
 /**
  * Created by Alireza Afkar on 12/11/15 AD.
  */
-public class JsonArrayRequester implements com.android.volley.Response.Listener<String>, com.android.volley.Response.ErrorListener {
+public class JsonStringRequester implements com.android.volley.Response.Listener<String>, com.android.volley.Response.ErrorListener {
     private RequestQueue mQueue;
     private RequestBuilder mBuilder;
-    private Response.ArrayResponse mCallBack;
+    private Response.StringResponse mCallBack;
 
-    protected JsonArrayRequester() {
+    protected JsonStringRequester() {
     }
 
-    protected JsonArrayRequester(RequestQueue queue, RequestBuilder builder, Response.ArrayResponse callBack) {
+    protected JsonStringRequester(RequestQueue queue, RequestBuilder builder, Response.StringResponse callBack) {
         mQueue = queue;
         mBuilder = builder;
         mCallBack = callBack;
@@ -77,7 +74,7 @@ public class JsonArrayRequester implements com.android.volley.Response.Listener<
             url = appendToUrl(url, param);
         }
 
-        StringRequest request = new StringRequest(method, url, JsonArrayRequester.this, JsonArrayRequester.this) {
+        StringRequest request = new StringRequest(method, url, JsonStringRequester.this, JsonStringRequester.this) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 if (mBuilder.header != null)
@@ -140,25 +137,7 @@ public class JsonArrayRequester implements com.android.volley.Response.Listener<
 
     @Override
     public void onResponse(String response) {
-        if (mBuilder.allowNullResponse &&
-                response.length() == 0 ||
-                response.equalsIgnoreCase("null") ||
-                response.equalsIgnoreCase("[]")) {
-            sendResponse(null);
-            return;
-        }
-        try {
-            JSONArray jsonArray = new JSONArray(response);
-            if (jsonArray.length() > 0) {
-                sendResponse(jsonArray);
-            } else {
-                sendFinish(R.string.parsing_error, new ParseError());
-            }
-        } catch (JSONException e) {
-            sendFinish(R.string.network_error, new ParseError(e));
-            if (mBuilder.shouldCache && mQueue.getCache() != null)
-                mQueue.getCache().clear();
-        }
+        sendResponse(response);
     }
 
     @Override
@@ -183,11 +162,11 @@ public class JsonArrayRequester implements com.android.volley.Response.Listener<
     }
 
     @SuppressWarnings("unused")
-    public void setCallback(Response.ArrayResponse callback) {
+    public void setCallback(Response.StringResponse callback) {
         mCallBack = callback;
     }
 
-    private void sendResponse(JSONArray jsonArray) {
+    private void sendResponse(String jsonArray) {
         if (mCallBack != null) {
             mCallBack.onRequestFinish(mBuilder.requestCode);
             mCallBack.onResponse(mBuilder.requestCode, jsonArray);

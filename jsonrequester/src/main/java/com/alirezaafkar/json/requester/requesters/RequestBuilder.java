@@ -50,12 +50,20 @@ public class RequestBuilder {
         return buildArrayRequester(getQueue(), listener);
     }
 
+    public JsonStringRequester buildStringRequester(Response.StringResponse listener) {
+        return buildStringRequester(getQueue(), listener);
+    }
+
     public JsonObjectRequester buildObjectRequester(RequestQueue queue, Response.ObjectResponse listener) {
         return new JsonObjectRequester(queue, this, listener);
     }
 
     public JsonArrayRequester buildArrayRequester(RequestQueue queue, Response.ArrayResponse listener) {
         return new JsonArrayRequester(queue, this, listener);
+    }
+
+    public JsonStringRequester buildStringRequester(RequestQueue queue, Response.StringResponse listener) {
+        return new JsonStringRequester(queue, this, listener);
     }
 
     private RequestQueue getQueue() {
