@@ -8,6 +8,7 @@ import com.alirezaafkar.json.requester.Requester;
 import com.alirezaafkar.json.requester.interfaces.Methods;
 import com.alirezaafkar.json.requester.interfaces.Response;
 import com.android.volley.AuthFailureError;
+import com.android.volley.Cache;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkError;
 import com.android.volley.NetworkResponse;
@@ -27,16 +28,16 @@ import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 import static android.text.TextUtils.isEmpty;
-import static com.alirezaafkar.json.requester.CommonUtils.isClientError;
+import static com.alirezaafkar.json.requester.requesters.Utils.isClientError;
 
 /**
  * Created by Alireza Afkar on 12/11/15 AD.
  */
-
 public class JsonObjectRequester implements com.android.volley.Response.Listener<JSONObject>, com.android.volley.Response.ErrorListener {
-    protected RequestQueue mQueue;
-    protected RequestBuilder mBuilder;
-    protected Response.ObjectResponse mCallBack;
+    private RequestQueue mQueue;
+    private RequestBuilder mBuilder;
+    private NetworkResponse mResponse;
+    private Response.ObjectResponse mCallBack;
 
     protected JsonObjectRequester() {
     }
@@ -120,21 +121,29 @@ public class JsonObjectRequester implements com.android.volley.Response.Listener
                 return mBuilder.priority;
             }
 
+            private Cache.Entry getCacheEntry(NetworkResponse response) {
+                if (mBuilder.cacheTime == null) {
+                    return HttpHeaderParser.parseCacheHeaders(response);
+                } else {
+                    return Utils.parseIgnoreCacheHeaders(response, mBuilder.cacheTime);
+                }
+            }
+
             @Override
             protected com.android.volley.Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
+                mResponse = response;
                 try {
                     if (!(response != null && response.data != null))
                         return com.android.volley.Response.error(null);
 
                     String jsonString = new String(response.data, mBuilder.encoding);
                     if (jsonString.length() == 0 || jsonString.equalsIgnoreCase("null")) {
-                        if (mBuilder.allowNullResponse)
-                            return com.android.volley.Response.success(null
-                                    , HttpHeaderParser.parseCacheHeaders(response));
+                        if (mBuilder.allowNullResponse) {
+                            return com.android.volley.Response.success(null, getCacheEntry(response));
+                        }
                     }
 
-                    return com.android.volley.Response.success(new JSONObject(jsonString)
-                            , HttpHeaderParser.parseCacheHeaders(response));
+                    return com.android.volley.Response.success(new JSONObject(jsonString), getCacheEntry(response));
 
                 } catch (UnsupportedEncodingException e) {
                     return com.android.volley.Response.error(new ParseError(e));
@@ -196,7 +205,7 @@ public class JsonObjectRequester implements com.android.volley.Response.Listener
 
     private void sendResponse(JSONObject jsonObject) {
         if (mCallBack != null) {
-            mCallBack.onResponse(mBuilder.requestCode, jsonObject);
+            mCallBack.onResponse(mBuilder.requestCode, mResponse, jsonObject);
             mCallBack.onRequestFinish(mBuilder.requestCode);
         }
     }

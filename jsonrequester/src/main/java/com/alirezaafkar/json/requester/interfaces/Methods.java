@@ -4,15 +4,11 @@ import android.support.annotation.IntDef;
 
 import com.android.volley.Request;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-
 /**
  * Created by Alireza Afkar on 15/12/2015.
  */
 public class Methods implements Request.Method {
     @IntDef({GET, POST, PUT, DELETE, HEAD, OPTIONS})
-    @Retention(RetentionPolicy.SOURCE)
     public @interface Method {
     }
 

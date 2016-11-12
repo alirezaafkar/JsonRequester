@@ -3,6 +3,7 @@ package com.alirezaafkar.json.requester.requesters;
 import android.content.Context;
 import android.support.annotation.Nullable;
 
+import com.alirezaafkar.json.requester.CacheTime;
 import com.alirezaafkar.json.requester.Requester;
 import com.alirezaafkar.json.requester.interfaces.ContentType;
 import com.alirezaafkar.json.requester.interfaces.Response;
@@ -22,6 +23,7 @@ public class RequestBuilder {
     protected byte[] body;
     protected Context context;
     protected int requestCode;
+    protected CacheTime cacheTime;
     protected Integer retry, timeOut;
     protected Request.Priority priority;
     protected Map<String, String> header;
@@ -143,6 +145,24 @@ public class RequestBuilder {
 
     public RequestBuilder shouldCache(boolean shouldCache) {
         this.shouldCache = shouldCache;
+        return this;
+    }
+
+    /**
+     * Ignores server cache control
+     *
+     * @param cacheHitButRefreshed in given time, cache will be hit, but also refreshed on background
+     * @param cacheExpired         in given time, this cache entry expires completely
+     */
+    public RequestBuilder forceCache(long cacheHitButRefreshed, long cacheExpired) {
+        return forceCache(new CacheTime(cacheHitButRefreshed, cacheExpired));
+    }
+
+    /**
+     * Ignores server cache control
+     */
+    public RequestBuilder forceCache(CacheTime cacheTime) {
+        this.cacheTime = cacheTime;
         return this;
     }
 

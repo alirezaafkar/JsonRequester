@@ -2,6 +2,7 @@ package com.alirezaafkar.json.requester.interfaces;
 
 import android.support.annotation.Nullable;
 
+import com.android.volley.NetworkResponse;
 import com.android.volley.VolleyError;
 
 import org.json.JSONArray;
@@ -20,25 +21,29 @@ public class Response {
     }
 
     public interface ObjectResponse extends SimpleResponse {
-        void onResponse(int requestCode, @Nullable JSONObject jsonObject);
+        void onResponse(int requestCode, @Nullable NetworkResponse response, @Nullable JSONObject jsonObject);
 
         void onErrorResponse(int requestCode, VolleyError volleyError, @Nullable JSONObject errorObject);
     }
 
     public interface ArrayResponse extends SimpleResponse {
-        void onResponse(int requestCode, @Nullable JSONArray jsonArray);
+        void onResponse(int requestCode, @Nullable NetworkResponse response, @Nullable JSONArray jsonArray);
 
         void onErrorResponse(int requestCode, VolleyError volleyError, String error);
     }
 
     public interface StringResponse extends SimpleResponse {
-        void onResponse(int requestCode, @Nullable String jsonArray);
+        void onResponse(int requestCode, @Nullable NetworkResponse response, @Nullable String string);
 
         void onErrorResponse(int requestCode, VolleyError volleyError, String error);
     }
 
     public static class SimpleObjectResponse implements ObjectResponse {
         @Override
+        public void onResponse(int requestCode, @Nullable NetworkResponse response, @Nullable JSONObject jsonObject) {
+            onResponse(requestCode, jsonObject);
+        }
+
         public void onResponse(int requestCode, @Nullable JSONObject jsonObject) {
 
         }
@@ -66,6 +71,10 @@ public class Response {
 
     public static class SimpleArrayResponse implements ArrayResponse {
         @Override
+        public void onResponse(int requestCode, @Nullable NetworkResponse response, @Nullable JSONArray jsonArray) {
+            onResponse(requestCode, jsonArray);
+        }
+
         public void onResponse(int requestCode, @Nullable JSONArray jsonArray) {
 
         }
@@ -93,7 +102,11 @@ public class Response {
 
     public static class SimpleStringResponse implements StringResponse {
         @Override
-        public void onResponse(int requestCode, @Nullable String jsonArray) {
+        public void onResponse(int requestCode, @Nullable NetworkResponse response, @Nullable String string) {
+            onResponse(requestCode, string);
+        }
+
+        public void onResponse(int requestCode, @Nullable String string) {
 
         }
 
