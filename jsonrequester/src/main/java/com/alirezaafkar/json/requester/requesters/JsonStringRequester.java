@@ -76,6 +76,12 @@ public class JsonStringRequester implements com.android.volley.Response.Listener
             url = appendToUrl(url, param);
         }
 
+        if (Utils.isBodyEmpty(mBuilder) &&
+                method == Methods.POST ||
+                method == Methods.PUT) {
+            mBuilder.body("body");
+        }
+
         StringRequest request = new StringRequest(method, url, JsonStringRequester.this, JsonStringRequester.this) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
@@ -91,10 +97,7 @@ public class JsonStringRequester implements com.android.volley.Response.Listener
 
             @Override
             public byte[] getBody() throws AuthFailureError {
-                return mBuilder.body != null &&
-                        mBuilder.body.length != 0
-                        ? mBuilder.body
-                        : super.getBody();
+                return Utils.isBodyEmpty(mBuilder) ? super.getBody() : mBuilder.body;
             }
 
             @Override
@@ -192,16 +195,16 @@ public class JsonStringRequester implements com.android.volley.Response.Listener
         }
 
         String error = new String(volleyError.networkResponse.data);
-        mCallBack.onErrorResponse(mBuilder.requestCode, volleyError, error);
         mCallBack.onRequestFinish(mBuilder.requestCode);
+        mCallBack.onErrorResponse(mBuilder.requestCode, volleyError, error);
     }
 
     private void sendFinish(int message, VolleyError volleyError) {
         if (mCallBack == null) return;
 
+        mCallBack.onRequestFinish(mBuilder.requestCode);
         mCallBack.onFinishResponse(mBuilder.requestCode, volleyError,
                 mBuilder.context.getString(message));
-        mCallBack.onRequestFinish(mBuilder.requestCode);
 
         if (mBuilder.showError)
             Toast.makeText(mBuilder.context,

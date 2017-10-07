@@ -17,6 +17,10 @@ public class Utils {
         return url + String.format(param, s);
     }
 
+    public static boolean isBodyEmpty(RequestBuilder builder){
+        return !(builder.body != null && builder.body.length > 0);
+    }
+
     public static boolean isClientError(VolleyError volleyError) {
         int statusCode = volleyError.networkResponse.statusCode;
         return (statusCode >= 400 && statusCode < 500);

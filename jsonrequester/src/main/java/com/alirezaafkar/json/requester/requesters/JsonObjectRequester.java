@@ -86,9 +86,14 @@ public class JsonObjectRequester implements com.android.volley.Response.Listener
             url += String.format(param, s);
         }
 
+        if (Utils.isBodyEmpty(mBuilder) &&
+                method == Methods.POST ||
+                method == Methods.PUT) {
+            mBuilder.body("body");
+        }
+
         JsonObjectRequest request = new JsonObjectRequest(method,
                 url, jsonObject, JsonObjectRequester.this, JsonObjectRequester.this) {
-
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 if (mBuilder.header != null)
@@ -103,10 +108,7 @@ public class JsonObjectRequester implements com.android.volley.Response.Listener
 
             @Override
             public byte[] getBody() {
-                return mBuilder.body != null &&
-                        mBuilder.body.length != 0
-                        ? mBuilder.body
-                        : super.getBody();
+                return Utils.isBodyEmpty(mBuilder) ? super.getBody() : mBuilder.body;
             }
 
             @Override
@@ -205,8 +207,8 @@ public class JsonObjectRequester implements com.android.volley.Response.Listener
 
     private void sendResponse(JSONObject jsonObject) {
         if (mCallBack != null) {
-            mCallBack.onResponse(mBuilder.requestCode, mResponse, jsonObject);
             mCallBack.onRequestFinish(mBuilder.requestCode);
+            mCallBack.onResponse(mBuilder.requestCode, mResponse, jsonObject);
         }
     }
 
@@ -221,8 +223,8 @@ public class JsonObjectRequester implements com.android.volley.Response.Listener
         try {
             JSONObject errorObject = new JSONObject(new
                     String(volleyError.networkResponse.data));
-            mCallBack.onErrorResponse(mBuilder.requestCode, volleyError, errorObject);
             mCallBack.onRequestFinish(mBuilder.requestCode);
+            mCallBack.onErrorResponse(mBuilder.requestCode, volleyError, errorObject);
         } catch (JSONException e) {
             sendFinish(R.string.parsing_error, volleyError);
         }
@@ -231,9 +233,9 @@ public class JsonObjectRequester implements com.android.volley.Response.Listener
     private void sendFinish(int message, VolleyError volleyError) {
         if (mCallBack == null) return;
 
+        mCallBack.onRequestFinish(mBuilder.requestCode);
         mCallBack.onFinishResponse(mBuilder.requestCode, volleyError,
                 mBuilder.context.getString(message));
-        mCallBack.onRequestFinish(mBuilder.requestCode);
 
         if (mBuilder.showError)
             Toast.makeText(mBuilder.context,

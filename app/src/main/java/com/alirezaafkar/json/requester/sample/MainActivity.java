@@ -45,8 +45,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mTextView = (TextView) findViewById(R.id.text);
-        mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
+        mTextView = findViewById(R.id.text);
+        mProgressBar = findViewById(R.id.progressBar);
 
         JsonObjectListener objectListener = new JsonObjectListener();
 
