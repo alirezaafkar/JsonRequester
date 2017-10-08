@@ -57,21 +57,26 @@ public class JsonObjectRequester implements com.android.volley.Response.Listener
      */
     @SuppressWarnings("unused")
     public void request(@NonNull String url) {
-        request(Methods.GET, url, getNullJson());
+        request(Methods.GET, url, null, getNullJson());
     }
 
     @SuppressWarnings("unused")
     public void request(@Methods.Method int method, @NonNull String url) {
-        request(method, url, getNullJson());
+        request(method, url, null, getNullJson());
     }
 
     @SuppressWarnings("unused")
-    public void request(@Methods.Method int method, @NonNull String url, @NonNull String body) {
-        mBuilder.body = body.getBytes();
-        request(method, url, getNullJson());
+    public void request(@Methods.Method int method, @NonNull String url, String body) {
+        request(method, url, body, getNullJson());
     }
 
+    @SuppressWarnings("unused")
     public void request(@Methods.Method int method, @NonNull String url, JSONObject jsonObject) {
+        request(method, url, null, jsonObject);
+    }
+
+    public void request(@Methods.Method final int method,
+                        @NonNull String url, final String body, final JSONObject jsonObject) {
         if (mCallBack != null)
             mCallBack.onRequestStart(mBuilder.requestCode);
 
@@ -84,12 +89,6 @@ public class JsonObjectRequester implements com.android.volley.Response.Listener
         if (param != null) {
             String s = url.contains("?") ? "&" : "?";
             url += String.format(param, s);
-        }
-
-        if (Utils.isBodyEmpty(mBuilder) &&
-                method == Methods.POST ||
-                method == Methods.PUT) {
-            mBuilder.body("body");
         }
 
         JsonObjectRequest request = new JsonObjectRequest(method,
@@ -108,7 +107,11 @@ public class JsonObjectRequester implements com.android.volley.Response.Listener
 
             @Override
             public byte[] getBody() {
-                return Utils.isBodyEmpty(mBuilder) ? super.getBody() : mBuilder.body;
+                byte[] reqBody = body == null ? null : body.getBytes();
+                if (Utils.needsFakeBody(method, reqBody, jsonObject)) {
+                    reqBody = "body".getBytes();
+                }
+                return Utils.isBodyEmpty(reqBody) ? super.getBody() : reqBody;
             }
 
             @Override

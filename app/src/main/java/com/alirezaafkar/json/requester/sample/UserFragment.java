@@ -43,6 +43,7 @@ public class UserFragment extends DialogFragment implements View.OnClickListener
         Dialog dialog = getDialog();
         if (dialog == null) return;
         Window window = dialog.getWindow();
+        if (window == null) return;
         WindowManager.LayoutParams param = window.getAttributes();
         window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);

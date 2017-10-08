@@ -8,8 +8,8 @@ android {
         applicationId "com.alirezaafkar.json.requester.sample"
         minSdkVersion 14
         targetSdkVersion 26
-        versionCode 103
-        versionName "1.0.3"
+        versionCode 104
+        versionName "1.0.4"
     }
     buildTypes {
         release {

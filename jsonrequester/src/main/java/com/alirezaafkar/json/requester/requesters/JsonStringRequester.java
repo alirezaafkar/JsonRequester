@@ -55,13 +55,12 @@ public class JsonStringRequester implements com.android.volley.Response.Listener
     }
 
     @SuppressWarnings("unused")
-    public void request(@Methods.Method int method, @NonNull String url, @NonNull String body) {
-        mBuilder.body = body.getBytes();
-        request(method, url);
+    public void request(@Methods.Method int method, @NonNull String url) {
+        request(method, url, null);
     }
 
     @SuppressWarnings("unused")
-    public void request(@Methods.Method int method, @NonNull String url) {
+    public void request(@Methods.Method final int method, @NonNull String url, final String body) {
         if (mCallBack != null)
             mCallBack.onRequestStart(mBuilder.requestCode);
 
@@ -74,12 +73,6 @@ public class JsonStringRequester implements com.android.volley.Response.Listener
         if (param != null) {
             String s = url.contains("?") ? "&" : "?";
             url = appendToUrl(url, param);
-        }
-
-        if (Utils.isBodyEmpty(mBuilder) &&
-                method == Methods.POST ||
-                method == Methods.PUT) {
-            mBuilder.body("body");
         }
 
         StringRequest request = new StringRequest(method, url, JsonStringRequester.this, JsonStringRequester.this) {
@@ -97,7 +90,11 @@ public class JsonStringRequester implements com.android.volley.Response.Listener
 
             @Override
             public byte[] getBody() throws AuthFailureError {
-                return Utils.isBodyEmpty(mBuilder) ? super.getBody() : mBuilder.body;
+                byte[] reqBody = body == null ? null : body.getBytes();
+                if (Utils.needsFakeBody(method, reqBody)) {
+                    reqBody = "body".getBytes();
+                }
+                return Utils.isBodyEmpty(reqBody) ? super.getBody() : reqBody;
             }
 
             @Override

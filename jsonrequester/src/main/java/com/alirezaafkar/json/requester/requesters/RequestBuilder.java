@@ -20,7 +20,6 @@ import static com.alirezaafkar.json.requester.interfaces.ContentType.TYPE_JSON;
  */
 @SuppressWarnings({"unused", "FieldCanBeLocal"})
 public class RequestBuilder {
-    protected byte[] body;
     protected Context context;
     protected int requestCode;
     protected CacheTime cacheTime;
@@ -104,16 +103,6 @@ public class RequestBuilder {
 
     public RequestBuilder contentType(@ContentType.Type String contentType) {
         this.contentType = contentType;
-        return this;
-    }
-
-    public RequestBuilder body(String body) {
-        this.body = body.getBytes();
-        return this;
-    }
-
-    public RequestBuilder body(byte[] body) {
-        this.body = body;
         return this;
     }
 

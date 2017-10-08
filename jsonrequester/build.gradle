@@ -8,8 +8,8 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 26
-        versionCode 111
-        versionName "1.1.1"
+        versionCode 114
+        versionName "1.1.4"
     }
     buildTypes {
         release {
@@ -26,7 +26,7 @@ dependencies {
 }
 
 publish {
-    publishVersion = '1.1.1'
+    publishVersion = '1.1.4'
 
     userOrg = 'alirezaafkar'
     groupId = 'com.alirezaafkar'
